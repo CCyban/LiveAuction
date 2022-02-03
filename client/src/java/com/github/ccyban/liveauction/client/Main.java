@@ -1,4 +1,4 @@
-package com.github.ccyban.liveauction;
+package com.github.ccyban.liveauction.client;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
