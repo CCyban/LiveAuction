@@ -1,21 +1,21 @@
 package com.github.ccyban.liveauction.client;
 
+import com.github.ccyban.liveauction.client.models.classes.PageManager;
+import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import static com.github.ccyban.liveauction.client.models.classes.PageManager.loadPage;
 
+public final class Main extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();
-    }
+    public void start(final Stage primaryStage) {
+        // Initialising my own ApplicationManager to manage the application lifecycle
+        PageManager.initialise(primaryStage, 480, 800);
 
+        // Load the initial page of the application using the ApplicationManager
+        loadPage(Page.Login);
+    }
 
     public static void main(String[] args) {
         launch(args);
