@@ -3,8 +3,8 @@ JavaFX
 
 ### Java ###
 # Compiled folders
-*live-auction/client/out
-*live-auction/server/out
+*client/out
+*server/out
 
 # Log file
 *.log
