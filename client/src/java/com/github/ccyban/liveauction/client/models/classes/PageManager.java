@@ -1,8 +1,10 @@
 package com.github.ccyban.liveauction.client.models.classes;
 
 import com.github.ccyban.liveauction.client.models.enumerations.Page;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.EnumMap;
 
@@ -26,6 +28,13 @@ public class PageManager {
         stage = primaryStage;
         defaultResolution.Height = defaultHeight;
         defaultResolution.Width = defaultWidth;
+
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(final WindowEvent event) {
+                AuctionConnection.cancelTimerTask();
+            }
+        });
     }
 
     public static void loadPage(final Page page) {
