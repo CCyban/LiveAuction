@@ -40,5 +40,6 @@ public class loginController implements Initializable {
 
     public void onSuccessfulSignIn() {
         PageManager.loadPage(Page.AuctionList);
+
     }
 }

@@ -1,18 +1,15 @@
-package com.github.ccyban.liveauction.client.models.classes;
+package com.github.ccyban.liveauction.shared.models.classes;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Currency;
 import java.util.UUID;
 
-public class Auction {
+public class Auction implements Serializable {
     private UUID auctionUUID;
     private String name;
     private LocalDateTime expireDate;

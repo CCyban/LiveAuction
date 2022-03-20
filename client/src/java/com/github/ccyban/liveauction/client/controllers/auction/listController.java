@@ -1,9 +1,14 @@
 package com.github.ccyban.liveauction.client.controllers.auction;
 
-import com.github.ccyban.liveauction.client.models.classes.Auction;
 import com.github.ccyban.liveauction.client.models.classes.AuctionConnection;
-import com.github.ccyban.liveauction.client.models.classes.Bid;
+import com.github.ccyban.liveauction.client.models.classes.ClientSubscriptionHandler;
+import com.github.ccyban.liveauction.client.models.classes.PageManager;
 import com.github.ccyban.liveauction.client.models.enumerations.Filter;
+import com.github.ccyban.liveauction.client.models.enumerations.Page;
+import com.github.ccyban.liveauction.shared.models.classes.Auction;
+import com.github.ccyban.liveauction.shared.models.classes.Bid;
+import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
+import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,7 +30,7 @@ public class listController implements Initializable {
     private ObservableList<Auction> auctionObservableList = FXCollections.observableArrayList();
 
     @FXML
-    private TableView tableViewAuctions;
+    private TableView<Auction> tableViewAuctions;
 
     @FXML
     private VBox vBoxAuctionFilters;
@@ -46,19 +51,19 @@ public class listController implements Initializable {
 
     private void loadAuctionColumnsIntoTable() {
         // Set the TableColumns up for the TableView
-        TableColumn nameCol = new TableColumn("Auction Name");
+        TableColumn<Auction, String> nameCol = new TableColumn<Auction, String>("Auction Name");
         nameCol.setPrefWidth(150);
         nameCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getNameString"));
 
-        TableColumn topBidCol = new TableColumn("Top Bid");
+        TableColumn<Auction, String> topBidCol = new TableColumn<Auction, String>("Top Bid");
         topBidCol.setPrefWidth(125);
         topBidCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getTopBidString"));
 
-        TableColumn timeLeftCol = new TableColumn("Time Left");
+        TableColumn<Auction, String> timeLeftCol = new TableColumn<Auction, String>("Time Left");
         timeLeftCol.setPrefWidth(150);
         timeLeftCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getTimeLeftString"));
 
-        TableColumn favouritedCol = new TableColumn("★");
+        TableColumn<Auction, String> favouritedCol = new TableColumn<>("★");
         favouritedCol.setPrefWidth(100);
         favouritedCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getHasFavouritedString"));
 
@@ -70,25 +75,13 @@ public class listController implements Initializable {
     }
 
     private void loadAuctionItemsIntoList() {
+        // Create a socket connection specifically for getting a list of all auctions
+        AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
 
-        for (int x = 0; x < 100; x ++) {
-            LocalDateTime randomExpiry = LocalDateTime.now().plusSeconds((int)(Math.random()*(70-5+1)+5));
+        ClientSubscriptionHandler csh = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetListOfAllAuctions, null), auctionObservableList);
+        auctionConnection.requestSocketData(csh);
 
-            ArrayList<Bid> randomBids = new ArrayList<>();
-
-            Random random = new Random();
-
-            if (random.nextBoolean()) {
-                Bid randomBid = new Bid(new BigDecimal((int)(Math.random()*(60))), UUID.fromString("8fc03087-d265-11e7-b8c6-83e29cd24f4c"));
-                randomBids.add(randomBid);
-            }
-
-            Boolean randomHasFavourited = random.nextBoolean();
-
-            auctionObservableList.add(new Auction("Some Auction", randomBids, randomExpiry, randomHasFavourited));
-        }
-
-        // Auto-updates table
+        // Auto client-side table updates (e.g. countdown)
         AuctionConnection.setTimerTask((new TimerTask() {
             @Override
             public void run() {
@@ -163,8 +156,11 @@ public class listController implements Initializable {
         // Refreshes table on tick
         tableViewAuctions.refresh();
 
-
         System.out.println("refreshed table data");
     }
 
+    @FXML
+    private void onOpenAuction() {
+        PageManager.loadPage(Page.AuctionDetails);
+    }
 }
