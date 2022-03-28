@@ -3,22 +3,23 @@ package com.github.ccyban.liveauction.server.models.classes;
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
+import org.apache.commons.lang3.SerializationUtils;
 
 import javax.crypto.SealedObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class SubscriptionHandler {
 
-    SocketRequest socketRequest;
-    ObjectOutputStream outputStream;
-    AuctionRepository auctionRepository;
-    int latestResponsePayloadHash;
-    KeySecurity keySecurity;
+    private SocketRequest socketRequest;
+    private ObjectOutputStream outputStream;
+    private AuctionRepository auctionRepository;
+    private KeySecurity keySecurity;
 
     public SubscriptionHandler(AuctionRepository auctionRepository, KeySecurity keySecurity, SocketRequest socketRequest, ObjectOutputStream outputStream) throws IOException {
         this.auctionRepository = auctionRepository;
@@ -53,8 +54,6 @@ public class SubscriptionHandler {
 
             SealedObject sealedSocketResponse = keySecurity.sealObject(socketResponse);
             outputStream.writeObject(sealedSocketResponse);
-
-            latestResponsePayloadHash = Objects.hash(socketResponse.responsePayload);
         }
         else {
             System.out.println("Null Payload?");
@@ -64,11 +63,8 @@ public class SubscriptionHandler {
     public void ensureClientHasLatestData() throws IOException {
         SocketResponse latestSocketResponse = getLatestSocketResponse();
 
-        System.out.println("Match Check: " + (Objects.hash(latestSocketResponse.responsePayload) == latestResponsePayloadHash ? "✔" : "❌"));
-
-        if (!(latestResponsePayloadHash == Objects.hash(latestSocketResponse.responsePayload))) {
-            System.out.println("Difference detected. Sending latest..");
-            sendSocketResponse(latestSocketResponse);
-        }
+        // Do not have to worry about performance of sending the same data twice because it would be recognised by the socket hashset
+        System.out.println("Sending latest data 📩");
+        sendSocketResponse(latestSocketResponse);
     }
 }

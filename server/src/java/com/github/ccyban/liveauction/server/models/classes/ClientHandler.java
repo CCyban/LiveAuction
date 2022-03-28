@@ -19,16 +19,18 @@ public class ClientHandler extends Thread {
     private AuctionRepository auctionRepository;
     private Runnable onClientConnect;
     private Runnable onClientDisconnect;
+    private Runnable onSubscriptionDataUpdate;
     public SubscriptionHandler subscriptionHandler;
     private KeySecurity keySecurity;
 
-    public ClientHandler(Socket socket, AuctionRepository _auctionRepository, Runnable _onClientConnect, Runnable _onClientDisconnect)
+    public ClientHandler(Socket socket, AuctionRepository auctionRepository, Runnable onClientConnect, Runnable onClientDisconnect, Runnable onSubscriptionDataUpdate)
     {
         super("ClientHandlerThread");
         clientSocket = socket;
-        onClientConnect = _onClientConnect;
-        onClientDisconnect = _onClientDisconnect;
-        auctionRepository = _auctionRepository;
+        this.auctionRepository = auctionRepository;
+        this.onClientConnect = onClientConnect;
+        this.onClientDisconnect = onClientDisconnect;
+        this.onSubscriptionDataUpdate = onSubscriptionDataUpdate;
         keySecurity = new KeySecurity();
     }
 
@@ -66,7 +68,10 @@ public class ClientHandler extends Thread {
                 incomingRequest = (SocketRequest) keySecurity.desealObject(incomingEncryptedRequest);
 
                 switch (incomingRequest.requestType) {
-                    case PostAuctionBid -> auctionRepository.bidOnAuction(incomingRequest.targetUUID, (Bid) incomingRequest.requestPayload);
+                    case PostAuctionBid -> {
+                        auctionRepository.bidOnAuction(incomingRequest.targetUUID, (Bid) incomingRequest.requestPayload);
+                        onSubscriptionDataUpdate.run();
+                    }
                     case GetListOfAllAuctions, GetAuctionDetailsById -> {
                         subscriptionHandler = new SubscriptionHandler(auctionRepository, keySecurity, incomingRequest, outputStream);
                     }

@@ -19,10 +19,11 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class detailsController implements Initializable {
 
-    private Auction auction;
+    private AtomicReference<Auction> auction = new AtomicReference<>();
 
     @FXML
     private Label labelHighestBid;
@@ -51,18 +52,16 @@ public class detailsController implements Initializable {
         AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
 
         UserSession userSession = UserSession.getUserSession();
-        auction = userSession.getSelectedAuction();
+        auction.set(userSession.getSelectedAuction());
 
-        ClientSubscriptionHandler clientSubscriptionHandler = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetAuctionDetailsById, auction.getAuctionUUID(), null), auction);
+        ClientSubscriptionHandler clientSubscriptionHandler = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetAuctionDetailsById, auction.get().getAuctionUUID(), null), auction, () -> onUINeedsUpdate());
         auctionConnection.requestSocketData(clientSubscriptionHandler);
-
-
 
         // Auto client-side table updates (e.g. countdown)
         auctionConnection.setTimerTask((new TimerTask() {
             @Override
             public void run() {
-                onDetailsUpdateTick();
+                onUINeedsUpdate();
             }
         }));
     }
@@ -75,27 +74,22 @@ public class detailsController implements Initializable {
     @FXML
     private void onBid() {
         if (auction != null) {
-            BigDecimal newBidAmount = auction.getTopBid().add(auction.getIncrementalBidPace());
+            BigDecimal newBidAmount = auction.get().getTopBid().add(auction.get().getIncrementalBidPace());
 
             AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
-            auctionConnection.postBid(auction.getAuctionUUID(), new Bid(newBidAmount, UUID.randomUUID()));
+            auctionConnection.postBid(auction.get().getAuctionUUID(), new Bid(newBidAmount, UUID.randomUUID()));
         }
     }
 
-    private void onDetailsUpdateTick() {
-        if (auction != null) {
-            Platform.runLater(() -> {
-                labelHighestBid.setText("Current Bid: £" + auction.getTopBid());
-                labelAuctionName.setText("Name: " + auction.getName());
-                labelEndsIn.setText(auction.getTimeLeftStringProperty().get());
-                labelAuctionHealth.setText("Status: " + (auction.getSecondsLeft() > 0 ? "Ongoing" : "Finished"));
-                labelSeller.setText("Seller: " + auction.getSellerName());
-                labelStartingBid.setText("Starting Bid: £" + auction.getStartingBidPrice());
-                labelIncrementalPace.setText("Bidding Increments: £" + auction.getIncrementalBidPace());
-            });
-        }
-        else {
-            System.out.println("auction is null?");
-        }
+    private void onUINeedsUpdate() {
+        Platform.runLater(() -> {
+            labelHighestBid.setText("Current Bid: £" + auction.get().getTopBid());
+            labelAuctionName.setText("Name: " + auction.get().getName());
+            labelEndsIn.setText(auction.get().getTimeLeftStringProperty().get());
+            labelAuctionHealth.setText("Status: " + (auction.get().getSecondsLeft() > 0 ? "Ongoing" : "Finished"));
+            labelSeller.setText("Seller: " + auction.get().getSellerName());
+            labelStartingBid.setText("Starting Bid: £" + auction.get().getStartingBidPrice());
+            labelIncrementalPace.setText("Bidding Increments: £" + auction.get().getIncrementalBidPace());
+        });
     }
 }

@@ -28,7 +28,6 @@ public class ServerHandler extends Thread {
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
     private Boolean isListening = true;
     private Consumer activeConcurrentConnectionsChangeConsumer;
-    private Timer subscriptionTimer;
 
     public ServerHandler(ServerSocket _serverSocket, AuctionRepository _auctionRepository, Consumer _activeConcurrentConnectionsChangeConsumer) {
         serverSocket = _serverSocket;
@@ -40,20 +39,12 @@ public class ServerHandler extends Thread {
     public void run() {
         activeConcurrentConnectionsChangeConsumer.accept(clientThreadPool.getActiveCount());
 
-        subscriptionTimer = new Timer();
-        subscriptionTimer.schedule(((new TimerTask() {
-            @Override
-            public void run() {
-                onSubscriptionsCheckTick();
-            }
-        })), 0, 1000);
-
         try {
             while(isListening) {
                 Socket newClientSocket = serverSocket.accept();
                 clientSockets.add(newClientSocket); // For disconnecting? (todo: check if it even works/needed since it only stops new connections last time I tested)
 
-                ClientHandler newClientHandler = new ClientHandler(newClientSocket, auctionRepository, () -> onClientConnect(), () -> onClientDisconnect());
+                ClientHandler newClientHandler = new ClientHandler(newClientSocket, auctionRepository, () -> onClientConnect(), () -> onClientDisconnect(), () -> onSubscriptionDataUpdate());
                 clientHandlers.add(newClientHandler);
                 clientThreadPool.execute(newClientHandler);
             }
@@ -73,7 +64,7 @@ public class ServerHandler extends Thread {
         activeConcurrentConnectionsChangeConsumer.accept(clientThreadPool.getActiveCount() - 1);
     }
 
-    private void onSubscriptionsCheckTick() {
+    public void onSubscriptionDataUpdate() {
         for (ClientHandler clientHandler: clientHandlers) {
             try {
                 if (clientHandler.subscriptionHandler != null) {
@@ -86,13 +77,8 @@ public class ServerHandler extends Thread {
     }
 
     public void shutDown() {
-        stopSubscriptionTimer();
         shutDownConnections();
         shutDownClientThreadPool();
-    }
-
-    private void stopSubscriptionTimer() {
-        subscriptionTimer.cancel();
     }
 
     private void shutDownConnections() {

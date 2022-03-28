@@ -73,7 +73,7 @@ public class listController implements Initializable {
         // Create a socket connection specifically for getting a list of all auctions
         AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
 
-        ClientSubscriptionHandler clientSubscriptionHandler = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetListOfAllAuctions, null, null), auctionObservableList);
+        ClientSubscriptionHandler clientSubscriptionHandler = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetListOfAllAuctions, null, null), auctionObservableList, () -> onTableUpdateTick());
         auctionConnection.requestSocketData(clientSubscriptionHandler);
 
         // Auto client-side table updates (e.g. countdown)

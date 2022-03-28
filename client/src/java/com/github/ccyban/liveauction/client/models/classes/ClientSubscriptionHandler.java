@@ -15,22 +15,25 @@ import java.io.ObjectOutputStream;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ClientSubscriptionHandler {
 
-    private SocketRequest _socketRequest;
-    public Object _responsePayloadObject;
+    private SocketRequest socketRequest;
+    public Object responsePayloadObject;
     private SecretKeySpec secretKey;
+    private Runnable onUINeedsUpdate;
 
-    public ClientSubscriptionHandler(SocketRequest socketRequest, Object responsePayloadObject) {
-        _socketRequest = socketRequest;
-        _responsePayloadObject = responsePayloadObject;
+    public ClientSubscriptionHandler(SocketRequest socketRequest, Object responsePayloadObject, Runnable onUINeedsUpdate) {
+        this.socketRequest = socketRequest;
+        this.responsePayloadObject = responsePayloadObject;
+        this.onUINeedsUpdate = onUINeedsUpdate;
     }
 
     public void sendSocketRequest(ObjectOutputStream out, ObjectInputStream in) {
         try {
             AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
-            SealedObject sealedSocketRequest = auctionConnection.encryptSocketRequest(_socketRequest);
+            SealedObject sealedSocketRequest = auctionConnection.encryptSocketRequest(socketRequest);
 
             out.writeObject(sealedSocketRequest);
             listenForSocketResponses(in);
@@ -54,13 +57,16 @@ public class ClientSubscriptionHandler {
                 break;
             }
             else {
-                switch (_socketRequest.requestType) {
-                    case GetListOfAllAuctions -> ((ObservableList<Auction>) _responsePayloadObject).setAll(FXCollections.observableArrayList((ArrayList<Auction>) (incomingResponse.responsePayload)));
+                switch (socketRequest.requestType) {
+                    case GetListOfAllAuctions -> ((ObservableList<Auction>) responsePayloadObject).setAll(FXCollections.observableArrayList((ArrayList<Auction>) (incomingResponse.responsePayload)));
                     case GetAuctionDetailsById -> {
                         System.out.println("Setting new auction details");
-                        _responsePayloadObject = incomingResponse.responsePayload;
+                        System.out.println("before auction top bid:" + ((AtomicReference<Auction>) responsePayloadObject).get().getTopBid());
+                        ((AtomicReference<Auction>) responsePayloadObject).set((Auction) incomingResponse.responsePayload);
+                        System.out.println("after auction top bid:" + ((AtomicReference<Auction>) responsePayloadObject).get().getTopBid());
                     }
                 }
+                onUINeedsUpdate.run();
             }
         }
         System.out.println("A Client Subscription Ended 🔚");
