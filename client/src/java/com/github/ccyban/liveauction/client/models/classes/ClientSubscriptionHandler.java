@@ -38,7 +38,9 @@ public class ClientSubscriptionHandler {
             out.writeObject(sealedSocketRequest);
             listenForSocketResponses(in);
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
+            System.out.println("Server Closed");
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -60,10 +62,7 @@ public class ClientSubscriptionHandler {
                 switch (socketRequest.requestType) {
                     case GetListOfAllAuctions -> ((ObservableList<Auction>) responsePayloadObject).setAll(FXCollections.observableArrayList((ArrayList<Auction>) (incomingResponse.responsePayload)));
                     case GetAuctionDetailsById -> {
-                        System.out.println("Setting new auction details");
-                        System.out.println("before auction top bid:" + ((AtomicReference<Auction>) responsePayloadObject).get().getTopBid());
                         ((AtomicReference<Auction>) responsePayloadObject).set((Auction) incomingResponse.responsePayload);
-                        System.out.println("after auction top bid:" + ((AtomicReference<Auction>) responsePayloadObject).get().getTopBid());
                     }
                 }
                 onUINeedsUpdate.run();

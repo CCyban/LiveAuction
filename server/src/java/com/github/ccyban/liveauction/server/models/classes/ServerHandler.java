@@ -23,16 +23,19 @@ public class ServerHandler extends Thread {
     private final int portNumber = 9090;
     private final ServerSocket serverSocket;
     private final AuctionRepository auctionRepository;
+    private final AccountRepository accountRepository;
     private ThreadPoolExecutor clientThreadPool = (ThreadPoolExecutor) newFixedThreadPool(128);
     private ArrayList<Socket> clientSockets = new ArrayList<>();
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
     private Boolean isListening = true;
     private Consumer activeConcurrentConnectionsChangeConsumer;
 
-    public ServerHandler(ServerSocket _serverSocket, AuctionRepository _auctionRepository, Consumer _activeConcurrentConnectionsChangeConsumer) {
-        serverSocket = _serverSocket;
-        auctionRepository = _auctionRepository;
-        activeConcurrentConnectionsChangeConsumer = _activeConcurrentConnectionsChangeConsumer;
+    public ServerHandler(ServerSocket serverSocket, AuctionRepository auctionRepository, AccountRepository accountRepository, Consumer activeConcurrentConnectionsChangeConsumer) {
+        this.serverSocket = serverSocket;
+        this.auctionRepository = auctionRepository;
+        this.accountRepository = accountRepository;
+        this.activeConcurrentConnectionsChangeConsumer = activeConcurrentConnectionsChangeConsumer;
+        ServerLog.getInstance().log("🔛 Server now Online");
     }
 
     @Override
@@ -44,7 +47,7 @@ public class ServerHandler extends Thread {
                 Socket newClientSocket = serverSocket.accept();
                 clientSockets.add(newClientSocket); // For disconnecting? (todo: check if it even works/needed since it only stops new connections last time I tested)
 
-                ClientHandler newClientHandler = new ClientHandler(newClientSocket, auctionRepository, () -> onClientConnect(), () -> onClientDisconnect(), () -> onSubscriptionDataUpdate());
+                ClientHandler newClientHandler = new ClientHandler(newClientSocket, auctionRepository, accountRepository, () -> onClientConnect(), () -> onClientDisconnect(), () -> onSubscriptionDataUpdate());
                 clientHandlers.add(newClientHandler);
                 clientThreadPool.execute(newClientHandler);
             }
@@ -65,6 +68,7 @@ public class ServerHandler extends Thread {
     }
 
     public void onSubscriptionDataUpdate() {
+        ServerLog.getInstance().log( "📩 Sending All Eligible Subscribed Clients Data Updates");
         for (ClientHandler clientHandler: clientHandlers) {
             try {
                 if (clientHandler.subscriptionHandler != null) {

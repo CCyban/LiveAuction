@@ -45,19 +45,19 @@ public class Auction implements Serializable {
         return new SimpleStringProperty(getName());
     }
 
-    public BigDecimal getTopBid() {
-        BigDecimal noBid = new BigDecimal(-1);
+    public Bid getTopBid() {
+        Bid noBid = new Bid(new BigDecimal(0), null);
 
-        BigDecimal topBid = noBid;
+        Bid topBid = noBid;
 
-        for(int i = 0; i < bids.size(); i++) {
-            if (bids.get(i).amount.compareTo(topBid) == 1) {
-                topBid = bids.get(i).amount;
+        for (int i = 0; i < bids.size(); i++) {
+            if (bids.get(i).amount.compareTo(topBid.amount) == 1) {
+                topBid = bids.get(i);
             }
         }
 
-        if (topBid.equals(noBid)) {
-            return new BigDecimal(0);
+        if (topBid.amount.equals(noBid.amount)) {
+            return noBid;
         }
         else {
             return topBid;
@@ -65,7 +65,7 @@ public class Auction implements Serializable {
     }
 
     public SimpleStringProperty getTopBidStringProperty() {
-        return new SimpleStringProperty(getTopBid().toString());
+        return new SimpleStringProperty(getTopBid().amount.toString());
     }
 
     public long getSecondsLeft() {
@@ -145,6 +145,12 @@ public class Auction implements Serializable {
     }
 
     public void bid(Bid newBid) {
-        bids.add(newBid);
+        if (getSecondsLeft() > 0) {
+            bids.add(newBid);
+        }
+    }
+
+    public ArrayList<Bid> getBids() {
+        return bids;
     }
 }

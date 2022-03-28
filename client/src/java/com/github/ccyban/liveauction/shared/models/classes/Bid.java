@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Bid implements Serializable {
-    BigDecimal amount;
-    UUID userUUID;
+    public BigDecimal amount;
+    public UUID userUUID;
 
     public Bid (BigDecimal amount, UUID userUUID) {
         this.amount = amount;

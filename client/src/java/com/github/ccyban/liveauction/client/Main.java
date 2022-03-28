@@ -11,10 +11,10 @@ public final class Main extends Application {
     @Override
     public void start(final Stage primaryStage) {
         // Initialising my own ApplicationManager to manage the application lifecycle
-        PageManager.initialise(primaryStage, 480, 800);
+        PageManager.initialise(primaryStage, 540, 900);
 
         // Load the initial page of the application using the ApplicationManager
-        loadPage(Page.Login);
+        loadPage(Page.Keys);
     }
 
     public static void main(String[] args) {

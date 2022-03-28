@@ -6,10 +6,7 @@ import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class AuctionRepository {
     public ArrayList<Auction> auctions;
@@ -30,15 +27,17 @@ public class AuctionRepository {
         // Mocking is used instead of having a real database call here
         Auction auction = getAuctionByUUID(auctionUUID);
         if (auction != null) {
-
-            System.out.println("top bid is currently: " + auction.getTopBid());
-
             auction.bid(newBid);
-            System.out.println("bid applied 💰");
-            System.out.println("top bid is now: " + auction.getTopBid());
         }
         else {
-            System.out.println("couldn't find auction off UUID");
+            ServerLog.getInstance().log("Failed to find auction by UUID");
         }
+    }
+
+    public ArrayList<String> getBiddingLog(UUID auctionUUID) {
+        ArrayList<String> test = new ArrayList<>();
+        test.add("test");
+
+        return test;
     }
 }

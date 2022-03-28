@@ -1,15 +1,13 @@
 package com.github.ccyban.liveauction.client.models.classes;
 
-import com.github.ccyban.liveauction.shared.models.classes.Auction;
-import com.github.ccyban.liveauction.shared.models.classes.Bid;
-import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
-import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
+import com.github.ccyban.liveauction.shared.models.classes.*;
 import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
 import javafx.collections.ObservableList;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.security.*;
 import java.util.*;
@@ -31,14 +29,16 @@ public class AuctionConnection {
     // -- Cut off area --
 
     private static AuctionConnection uniqueConnection;
+    public Boolean connectionEstablished;
 
-    private static SecretKeySpec symmetricKey;
+    private SecretKeySpec symmetricKey;
+    public Boolean hasSentSecret = false;
 
-    public static Socket clientSocket;
-    private static ObjectOutputStream out;
-    private static ObjectInputStream in;
+    public Socket clientSocket;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
-    private static Thread clientSubscription;
+    private Thread clientSubscription;
 
     private AuctionConnection () {
         // Starting connection
@@ -47,14 +47,15 @@ public class AuctionConnection {
             clientSocket = new Socket("localhost", 9090);
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
+            connectionEstablished = true;
         }
         catch (IOException e) {
-            System.out.println(e.getMessage());
+            connectionEstablished = false;
         }
     }
 
     public static AuctionConnection getAuctionConnection() {
-        if (uniqueConnection == null) {
+        if (uniqueConnection == null || !uniqueConnection.connectionEstablished) {
             uniqueConnection = new AuctionConnection();
         }
         return uniqueConnection;
@@ -111,6 +112,7 @@ public class AuctionConnection {
             byte[] encryptedSecretKey = cipher.doFinal(symmetricKey.getEncoded());
 
             out.writeObject(new SocketRequest(SocketRequestType.PostSymmetricKey, null, encryptedSecretKey));
+            hasSentSecret = true;
             System.out.println("SENT SECRET KEY ✔");
 
         } catch (IOException | ClassNotFoundException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException e) {
@@ -136,6 +138,30 @@ public class AuctionConnection {
             return (SocketResponse) sealedSocketResponse.getObject(symmetricKey);
 
         } catch (NoSuchAlgorithmException | InvalidKeyException | IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Boolean signIn(Account signInAttempt) {
+        try {
+            out.writeObject(
+                    encryptSocketRequest(
+                            new SocketRequest(SocketRequestType.SignIn, null, signInAttempt)
+                    )
+            );
+            SealedObject sealedResponse = (SealedObject) in.readObject();
+            SocketResponse signInAttemptResponse = decryptSocketResponse(sealedResponse);
+
+            UUID accountAttemptUUID = (UUID) signInAttemptResponse.responsePayload;
+            if (accountAttemptUUID != null) {
+                AccountSession.getAccountSession().accountSessionUUID = accountAttemptUUID;
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;
         }

@@ -4,7 +4,6 @@ import com.github.ccyban.liveauction.client.models.classes.*;
 import com.github.ccyban.liveauction.client.models.enumerations.Filter;
 import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
-import com.github.ccyban.liveauction.shared.models.classes.Bid;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
 import javafx.collections.FXCollections;
@@ -16,9 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class listController implements Initializable {
@@ -59,7 +56,7 @@ public class listController implements Initializable {
         timeLeftCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getTimeLeftString"));
 
         TableColumn<Auction, String> favouritedCol = new TableColumn<>("★");
-        favouritedCol.setPrefWidth(100);
+        favouritedCol.setPrefWidth(75);
         favouritedCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getHasFavouritedString"));
 
         // Add the constructed columns to the TableView
@@ -70,7 +67,6 @@ public class listController implements Initializable {
     }
 
     private void loadAuctionItemsIntoList() {
-        // Create a socket connection specifically for getting a list of all auctions
         AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
 
         ClientSubscriptionHandler clientSubscriptionHandler = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetListOfAllAuctions, null, null), auctionObservableList, () -> onTableUpdateTick());
@@ -150,8 +146,6 @@ public class listController implements Initializable {
 
         // Refreshes table on tick
         tableViewAuctions.refresh();
-
-        System.out.println("refreshed table data");
     }
 
     @FXML
@@ -166,10 +160,10 @@ public class listController implements Initializable {
 
         if (selectedAuction != null) {
 
-            UserSession userSession = UserSession.getUserSession();
-            userSession.setSelectedAuction(selectedAuction);
+            AccountSession accountSession = AccountSession.getAccountSession();
+            accountSession.setSelectedAuction(selectedAuction);
 
-            PageManager.loadPage(Page.AuctionDetails, userSession);
+            PageManager.loadPage(Page.AuctionDetails, accountSession);
         }
     }
 }

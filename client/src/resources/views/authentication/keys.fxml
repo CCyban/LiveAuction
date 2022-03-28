@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="540.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ccyban.liveauction.client.controllers.authentication.keysController">
+   <children>
+      <Label alignment="CENTER" text="Initate Secure Server Connection" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font size="36.0" />
+         </font>
+         <padding>
+            <Insets left="50.0" right="50.0" />
+         </padding>
+         <effect>
+            <Glow />
+         </effect>
+      </Label>
+      <Button fx:id="buttonExchangeKeys" mnemonicParsing="false" onAction="#onExchangeKeys" text="Exchange Keys">
+         <font>
+            <Font size="36.0" />
+         </font>
+         <VBox.margin>
+            <Insets top="65.0" />
+         </VBox.margin>
+      </Button>
+      <Label fx:id="labelKeyStatus" alignment="CENTER" text="Key Status: Not Exchanged" textAlignment="CENTER">
+         <font>
+            <Font size="24.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="75.0" top="35.0" />
+         </VBox.margin>
+      </Label>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
+         <children>
+            <Label text="Note: You need to have an AES-encrypted Connection for Login">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Button fx:id="buttonProceedToLogin" disable="true" mnemonicParsing="false" onAction="#onProceedToLogin" text="Proceed to Login">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>

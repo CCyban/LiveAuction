@@ -13,6 +13,7 @@ public class PageManager {
 
     // Double braces creates an initialisation block from a created anonymous class
     private static EnumMap pageValues = new EnumMap<Page, PageValue>(Page.class) {{
+        put(Page.Keys, new PageValue("/views/authentication/keys.fxml", "Exchange Keys"));
         put(Page.Login, new PageValue("/views/authentication/login.fxml", "Login Screen"));
         put(Page.AuctionList, new PageValue("/views/auction/list.fxml", "Auction List"));
         put(Page.AuctionPreview, new PageValue("/views/auction/preview.fxml", "Auction Preview"));
@@ -20,8 +21,8 @@ public class PageManager {
     }};
 
     private final static class defaultResolution {
-        public static int Height = 480;
-        public static int Width = 800;
+        public static int Height = 540;
+        public static int Width = 900;
     };
 
     public static void initialise(Stage primaryStage, int defaultHeight, int defaultWidth) {
@@ -41,7 +42,7 @@ public class PageManager {
         loadPage(page, null);
     }
 
-    public static void loadPage(final Page page, final UserSession userData) {
+    public static void loadPage(final Page page, final AccountSession userData) {
         // Java EnumMaps are not generic so I have to cast each time I grab a value from it
         PageValue requestedPage = (PageValue) pageValues.get(page);
 

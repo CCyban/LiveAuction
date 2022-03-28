@@ -1,6 +1,7 @@
 package com.github.ccyban.liveauction.server.controllers;
 
 import com.github.ccyban.liveauction.server.models.classes.ServerInstance;
+import com.github.ccyban.liveauction.server.models.classes.ServerLog;
 import com.github.ccyban.liveauction.shared.models.classes.Account;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -34,8 +35,7 @@ public class serverManagementController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> ob = FXCollections.observableArrayList("Test", "Test2", "Test3", "Test", "Test2", "Test3", "Test", "Test2", "Test3", "Test", "Test2", "Test3", "Test", "Test2", "Test3", "Test", "Test2", "Test3", "Test", "Test2", "Test3");
-        listViewServerLog.setItems(ob);
+        listViewServerLog.setItems(ServerLog.getInstance().getLog());
 
         ServerInstance serverInstance = ServerInstance.getInstance();
 

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefHeight="480.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ccyban.liveauction.client.controllers.auction.listController">
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="540.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ccyban.liveauction.client.controllers.auction.listController">
    <children>
       <VBox minWidth="-Infinity" prefWidth="200.0" spacing="15.0">
          <children>
@@ -47,13 +47,16 @@
       </VBox>
       <VBox alignment="TOP_CENTER" spacing="15.0" HBox.hgrow="ALWAYS">
          <children>
-            <TableView fx:id="tableViewAuctions" />
+            <TableView fx:id="tableViewAuctions" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
             <Button mnemonicParsing="false" onAction="#onOpenAuction" text="Open Auction">
                <font>
                   <Font size="24.0" />
                </font>
             </Button>
          </children>
+         <HBox.margin>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </HBox.margin>
       </VBox>
    </children>
 </HBox>

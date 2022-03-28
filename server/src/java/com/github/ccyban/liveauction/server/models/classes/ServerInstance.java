@@ -15,6 +15,7 @@ public class ServerInstance {
     private ServerHandler server;
     private Thread serverThread;
     private AuctionRepository auctionRepository;
+    private AccountRepository accountRepository;
 
     private ServerInstance() {
         isOnline = false;
@@ -50,10 +51,13 @@ public class ServerInstance {
                 serverSocket = new ServerSocket(9090);
 
                 // Mocking auction repository
-                auctionRepository = Mockito.mock(AuctionRepository.class);
+                auctionRepository = Mockito.spy(AuctionRepository.class);
                 MockHelper.mockAuctionRepository(auctionRepository);
 
-                server = new ServerHandler(serverSocket, auctionRepository, activeConcurrentConnectionsChangeConsumer);
+                accountRepository = Mockito.spy(AccountRepository.class);
+                MockHelper.mockAccountRepository(accountRepository);
+
+                server = new ServerHandler(serverSocket, auctionRepository, accountRepository, activeConcurrentConnectionsChangeConsumer);
             }
             catch (IOException e) {
                 e.printStackTrace();

@@ -26,7 +26,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/views/serverManagement.fxml"));
         primaryStage.setTitle("Server Management");
-        primaryStage.setScene(new Scene(root, 480, 800));
+        primaryStage.setScene(new Scene(root, 600, 800));
         primaryStage.show();
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
