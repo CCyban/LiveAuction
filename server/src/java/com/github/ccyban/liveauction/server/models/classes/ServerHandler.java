@@ -22,6 +22,7 @@ public class ServerHandler extends Thread {
 
     private final int portNumber = 9090;
     private final ServerSocket serverSocket;
+    private final AuctionRepository auctionRepository;
     private ThreadPoolExecutor clientThreadPool = (ThreadPoolExecutor) newFixedThreadPool(128);
     private ArrayList<Socket> clientSockets = new ArrayList<>();
     private ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
@@ -29,8 +30,9 @@ public class ServerHandler extends Thread {
     private Consumer activeConcurrentConnectionsChangeConsumer;
     private Timer subscriptionTimer;
 
-    public ServerHandler(ServerSocket _serverSocket, Consumer _activeConcurrentConnectionsChangeConsumer) {
+    public ServerHandler(ServerSocket _serverSocket, AuctionRepository _auctionRepository, Consumer _activeConcurrentConnectionsChangeConsumer) {
         serverSocket = _serverSocket;
+        auctionRepository = _auctionRepository;
         activeConcurrentConnectionsChangeConsumer = _activeConcurrentConnectionsChangeConsumer;
     }
 
@@ -51,7 +53,7 @@ public class ServerHandler extends Thread {
                 Socket newClientSocket = serverSocket.accept();
                 clientSockets.add(newClientSocket); // For disconnecting? (todo: check if it even works/needed since it only stops new connections last time I tested)
 
-                ClientHandler newClientHandler = new ClientHandler(newClientSocket, () -> onClientConnect(), () -> onClientDisconnect());
+                ClientHandler newClientHandler = new ClientHandler(newClientSocket, auctionRepository, () -> onClientConnect(), () -> onClientDisconnect());
                 clientHandlers.add(newClientHandler);
                 clientThreadPool.execute(newClientHandler);
             }

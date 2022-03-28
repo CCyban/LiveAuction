@@ -1,5 +1,8 @@
 package com.github.ccyban.liveauction.server.models.classes;
 
+import com.github.ccyban.liveauction.server.Main;
+import org.mockito.Mockito;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.function.Consumer;
@@ -11,6 +14,7 @@ public class ServerInstance {
     private ServerSocket serverSocket;
     private ServerHandler server;
     private Thread serverThread;
+    private AuctionRepository auctionRepository;
 
     private ServerInstance() {
         isOnline = false;
@@ -44,7 +48,12 @@ public class ServerInstance {
         if (isOnline) {
             try {
                 serverSocket = new ServerSocket(9090);
-                server = new ServerHandler(serverSocket, activeConcurrentConnectionsChangeConsumer);
+
+                // Mocking auction repository
+                auctionRepository = Mockito.mock(AuctionRepository.class);
+                MockHelper.mockAuctionRepository(auctionRepository);
+
+                server = new ServerHandler(serverSocket, auctionRepository, activeConcurrentConnectionsChangeConsumer);
             }
             catch (IOException e) {
                 e.printStackTrace();

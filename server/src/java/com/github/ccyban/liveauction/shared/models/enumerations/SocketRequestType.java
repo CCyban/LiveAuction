@@ -4,5 +4,9 @@ import java.io.Serializable;
 
 public enum SocketRequestType implements Serializable {
     GetListOfAllAuctions,
-    GetAuctionDetailsById
+    GetAuctionDetailsById,
+    PostAuctionBid,
+    CloseAllSubscriptions,
+    GetPublicKey,
+    PostSymmetricKey,
 }

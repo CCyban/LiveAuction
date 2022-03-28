@@ -1,19 +1,24 @@
 package com.github.ccyban.liveauction.client.models.classes;
 
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
+import com.github.ccyban.liveauction.shared.models.classes.Bid;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
 import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
 import javafx.collections.ObservableList;
 
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.Socket;
+import java.security.*;
 import java.util.*;
 
 public class AuctionConnection {
-    private static Timer tickTimer = new Timer();
+    private static Timer tickTimer;
 
     public static void setTimerTask(TimerTask timerTask) {
+        tickTimer = new Timer();
         tickTimer.schedule(timerTask, 0, 1000);
     }
 
@@ -26,6 +31,8 @@ public class AuctionConnection {
     // -- Cut off area --
 
     private static AuctionConnection uniqueConnection;
+
+    private static SecretKeySpec symmetricKey;
 
     public static Socket clientSocket;
     private static ObjectOutputStream out;
@@ -54,7 +61,7 @@ public class AuctionConnection {
     }
 
     public void requestSocketData(ClientSubscriptionHandler clientSubscriptionHandler) {
-        Thread clientSubscription = new Thread(new Runnable() {
+        clientSubscription = new Thread(new Runnable() {
             public void run() {
                 clientSubscriptionHandler.sendSocketRequest(out, in);
             }
@@ -62,4 +69,75 @@ public class AuctionConnection {
         clientSubscription.start();
     }
 
+    public void closeAllActiveSubscriptions() {
+        try {
+            out.writeObject(
+                    encryptSocketRequest(
+                            new SocketRequest(SocketRequestType.CloseAllSubscriptions, null, null)
+                    )
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void postBid(UUID auctionToBidOn, Bid newBid) {
+        try {
+            out.writeObject(encryptSocketRequest(new SocketRequest(SocketRequestType.PostAuctionBid, auctionToBidOn, newBid)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void exchangeSecureKeys() {
+        try {
+            out.writeObject(new SocketRequest(SocketRequestType.GetPublicKey, null, null));
+            SocketResponse publicKeyResponse = (SocketResponse) in.readObject();
+            PublicKey publicKey = (PublicKey) publicKeyResponse.responsePayload;
+
+            System.out.println("GOT PUBLIC KEY ✔");
+
+            byte[] secureRandomKeyBytes  = new byte[16];
+            SecureRandom secureRandom = new SecureRandom();
+
+            secureRandom.nextBytes(secureRandomKeyBytes);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secureRandomKeyBytes, "AES");
+
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+
+            symmetricKey = secretKeySpec;
+
+            byte[] encryptedSecretKey = cipher.doFinal(symmetricKey.getEncoded());
+
+            out.writeObject(new SocketRequest(SocketRequestType.PostSymmetricKey, null, encryptedSecretKey));
+            System.out.println("SENT SECRET KEY ✔");
+
+        } catch (IOException | ClassNotFoundException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public SealedObject encryptSocketRequest(SocketRequest socketRequest) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, symmetricKey);
+
+            return new SealedObject(socketRequest, cipher);
+
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public SocketResponse decryptSocketResponse(SealedObject sealedSocketResponse) {
+        try {
+            return (SocketResponse) sealedSocketResponse.getObject(symmetricKey);
+
+        } catch (NoSuchAlgorithmException | InvalidKeyException | IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

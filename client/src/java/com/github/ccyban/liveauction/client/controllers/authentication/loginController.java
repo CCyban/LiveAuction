@@ -1,5 +1,6 @@
 package com.github.ccyban.liveauction.client.controllers.authentication;
 
+import com.github.ccyban.liveauction.client.models.classes.AuctionConnection;
 import com.github.ccyban.liveauction.client.models.classes.PageManager;
 import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import javafx.event.ActionEvent;
@@ -20,7 +21,8 @@ public class loginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
+        auctionConnection.exchangeSecureKeys();
     }
 
     public void onEnter(ActionEvent actionEvent) {

@@ -1,6 +1,7 @@
 package com.github.ccyban.liveauction.server.controllers;
 
 import com.github.ccyban.liveauction.server.models.classes.ServerInstance;
+import com.github.ccyban.liveauction.shared.models.classes.Account;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

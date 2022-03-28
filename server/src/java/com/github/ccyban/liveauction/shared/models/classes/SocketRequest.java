@@ -8,9 +8,11 @@ import java.util.UUID;
 public class SocketRequest implements Serializable {
     public SocketRequestType requestType;
     public UUID targetUUID;
+    public Object requestPayload;
 
-    public SocketRequest(SocketRequestType _requestType, UUID _targetUUID) {
+    public SocketRequest(SocketRequestType _requestType, UUID _targetUUID, Object _requestPayload) {
         requestType = _requestType;
         targetUUID = _targetUUID;
+        requestPayload = _requestPayload;
     }
 }

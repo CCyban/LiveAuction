@@ -38,11 +38,16 @@ public class PageManager {
     }
 
     public static void loadPage(final Page page) {
+        loadPage(page, null);
+    }
+
+    public static void loadPage(final Page page, final UserSession userData) {
         // Java EnumMaps are not generic so I have to cast each time I grab a value from it
         PageValue requestedPage = (PageValue) pageValues.get(page);
 
         stage.setTitle(requestedPage.getTitle());
         stage.setScene(new Scene(requestedPage.getRoot(), defaultResolution.Width, defaultResolution.Height));
+        stage.setUserData(userData);
         stage.show();
     }
 }

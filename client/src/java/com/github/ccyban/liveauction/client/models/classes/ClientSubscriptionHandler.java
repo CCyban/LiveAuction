@@ -7,18 +7,20 @@ import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestTyp
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import javax.crypto.SealedObject;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class ClientSubscriptionHandler {
 
-    SocketRequest _socketRequest;
-    Object _responsePayloadObject;
-
-    Boolean isListening = true;
+    private SocketRequest _socketRequest;
+    public Object _responsePayloadObject;
+    private SecretKeySpec secretKey;
 
     public ClientSubscriptionHandler(SocketRequest socketRequest, Object responsePayloadObject) {
         _socketRequest = socketRequest;
@@ -26,27 +28,41 @@ public class ClientSubscriptionHandler {
     }
 
     public void sendSocketRequest(ObjectOutputStream out, ObjectInputStream in) {
-
         try {
-            out.writeObject(_socketRequest);
+            AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
+            SealedObject sealedSocketRequest = auctionConnection.encryptSocketRequest(_socketRequest);
+
+            out.writeObject(sealedSocketRequest);
             listenForSocketResponses(in);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     private void listenForSocketResponses(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        while(isListening) {
-            SocketResponse incomingResponse = (SocketResponse) in.readObject();
+        while(true) {
+            SealedObject incomingEncryptedResponse = (SealedObject) in.readObject();
+
+            AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
+            SocketResponse incomingResponse = auctionConnection.decryptSocketResponse(incomingEncryptedResponse);
+
             System.out.println("Client received: " + incomingResponse);
 
-            switch (_socketRequest.requestType) {
-                case GetListOfAllAuctions -> ((ObservableList<Auction>) _responsePayloadObject).setAll(FXCollections.observableArrayList((ArrayList<Auction>) incomingResponse.responsePayload));
-                case GetAuctionDetailsById -> _responsePayloadObject = incomingResponse.responsePayload;
+            // Check to see if it's a cancelled subscription
+            if (incomingResponse.responsePayload == null) {
+                break;
+            }
+            else {
+                switch (_socketRequest.requestType) {
+                    case GetListOfAllAuctions -> ((ObservableList<Auction>) _responsePayloadObject).setAll(FXCollections.observableArrayList((ArrayList<Auction>) (incomingResponse.responsePayload)));
+                    case GetAuctionDetailsById -> {
+                        System.out.println("Setting new auction details");
+                        _responsePayloadObject = incomingResponse.responsePayload;
+                    }
+                }
             }
         }
+        System.out.println("A Client Subscription Ended 🔚");
     }
 }

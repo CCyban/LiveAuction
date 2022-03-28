@@ -2,36 +2,43 @@ package com.github.ccyban.liveauction.server.models.classes;
 
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.Bid;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
 public class AuctionRepository {
+    public ArrayList<Auction> auctions;
 
-    public static ArrayList getListOfAllAuctions() {
+    public AuctionRepository() {
+        // Mocking is used instead of having a real database call here
+    }
 
-        ArrayList<Auction> listOfAllAuctions = new ArrayList<>();
+    public ArrayList<Auction> getListOfAllAuctions() {
+        return auctions;
+    }
 
-        for (int x = 0; x < 100; x ++) {
-            LocalDateTime randomExpiry = LocalDateTime.now().plusSeconds((int)(Math.random()*(70-5+1)+5));
+    public Auction getAuctionByUUID(UUID auctionUUID) {
+        return auctions.stream().filter((auction -> auction.getAuctionUUID().equals(auctionUUID))).findFirst().orElse(null);
+    }
 
-            ArrayList<Bid> randomBids = new ArrayList<>();
+    public void bidOnAuction(UUID auctionUUID, Bid newBid) {
+        // Mocking is used instead of having a real database call here
+        Auction auction = getAuctionByUUID(auctionUUID);
+        if (auction != null) {
 
-            Random random = new Random();
+            System.out.println("top bid is currently: " + auction.getTopBid());
 
-            if (random.nextBoolean()) {
-                Bid randomBid = new Bid(new BigDecimal((int)(Math.random()*(60))), UUID.fromString("8fc03087-d265-11e7-b8c6-83e29cd24f4c"));
-                randomBids.add(randomBid);
-            }
-
-            Boolean randomHasFavourited = random.nextBoolean();
-
-            listOfAllAuctions.add(new Auction("Some Auction", randomBids, randomExpiry, randomHasFavourited));
+            auction.bid(newBid);
+            System.out.println("bid applied 💰");
+            System.out.println("top bid is now: " + auction.getTopBid());
         }
-
-        return listOfAllAuctions;
+        else {
+            System.out.println("couldn't find auction off UUID");
+        }
     }
 }

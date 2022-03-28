@@ -1,8 +1,6 @@
 package com.github.ccyban.liveauction.client.controllers.auction;
 
-import com.github.ccyban.liveauction.client.models.classes.AuctionConnection;
-import com.github.ccyban.liveauction.client.models.classes.ClientSubscriptionHandler;
-import com.github.ccyban.liveauction.client.models.classes.PageManager;
+import com.github.ccyban.liveauction.client.models.classes.*;
 import com.github.ccyban.liveauction.client.models.enumerations.Filter;
 import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
@@ -23,8 +21,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import com.github.ccyban.liveauction.client.models.classes.AuctionListPredicates;
-
 public class listController implements Initializable {
 
     private ObservableList<Auction> auctionObservableList = FXCollections.observableArrayList();
@@ -41,7 +37,6 @@ public class listController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         loadAuctionTable();
         addFilterOptions();
-
     }
 
     private void loadAuctionTable() {
@@ -78,11 +73,11 @@ public class listController implements Initializable {
         // Create a socket connection specifically for getting a list of all auctions
         AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
 
-        ClientSubscriptionHandler csh = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetListOfAllAuctions, null), auctionObservableList);
-        auctionConnection.requestSocketData(csh);
+        ClientSubscriptionHandler clientSubscriptionHandler = new ClientSubscriptionHandler(new SocketRequest(SocketRequestType.GetListOfAllAuctions, null, null), auctionObservableList);
+        auctionConnection.requestSocketData(clientSubscriptionHandler);
 
         // Auto client-side table updates (e.g. countdown)
-        AuctionConnection.setTimerTask((new TimerTask() {
+        auctionConnection.setTimerTask((new TimerTask() {
             @Override
             public void run() {
                 onTableUpdateTick();
@@ -161,6 +156,20 @@ public class listController implements Initializable {
 
     @FXML
     private void onOpenAuction() {
-        PageManager.loadPage(Page.AuctionDetails);
+        // todo: do check if an auction is selected
+
+        AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
+        auctionConnection.cancelTimerTask();
+        auctionConnection.closeAllActiveSubscriptions();
+
+        Auction selectedAuction = tableViewAuctions.getSelectionModel().getSelectedItem();
+
+        if (selectedAuction != null) {
+
+            UserSession userSession = UserSession.getUserSession();
+            userSession.setSelectedAuction(selectedAuction);
+
+            PageManager.loadPage(Page.AuctionDetails, userSession);
+        }
     }
 }

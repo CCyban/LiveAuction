@@ -15,8 +15,11 @@ public class Auction implements Serializable {
     private LocalDateTime expireDate;
     private Boolean hasFavourited;
     private ArrayList<Bid> bids;
+    private String sellerName;
+    private BigDecimal startingBidPrice;
+    private BigDecimal incrementalBidPace;
 
-    public Auction(String name, ArrayList<Bid> bids, LocalDateTime expireDate, Boolean hasFavourited) {
+    public Auction(String name, ArrayList<Bid> bids, LocalDateTime expireDate, Boolean hasFavourited, String sellerName, BigDecimal startingBidPrice, BigDecimal incrementalBidPace) {
         // Generate a UUID for the class
         this.auctionUUID = UUID.randomUUID();
 
@@ -25,18 +28,24 @@ public class Auction implements Serializable {
         this.bids = bids;
         this.expireDate = expireDate;
         this.hasFavourited = hasFavourited;
+        this.sellerName = sellerName;
+        this.startingBidPrice = startingBidPrice;
+        this.incrementalBidPace = incrementalBidPace;
     }
 
     public UUID getAuctionUUID() {
         return auctionUUID;
     }
 
-    public SimpleStringProperty getNameStringProperty() {
-        return new SimpleStringProperty(name.toString());
+    public String getName() {
+        return name;
     }
 
-    public SimpleStringProperty getTopBidStringProperty() {
+    public SimpleStringProperty getNameStringProperty() {
+        return new SimpleStringProperty(getName());
+    }
 
+    public BigDecimal getTopBid() {
         BigDecimal noBid = new BigDecimal(-1);
 
         BigDecimal topBid = noBid;
@@ -48,35 +57,50 @@ public class Auction implements Serializable {
         }
 
         if (topBid.equals(noBid)) {
-            return new SimpleStringProperty("None");
+            return new BigDecimal(0);
         }
         else {
-            return new SimpleStringProperty(topBid.toString());
+            return topBid;
         }
     }
 
-    public SimpleStringProperty getTimeLeftStringProperty() {
+    public SimpleStringProperty getTopBidStringProperty() {
+        return new SimpleStringProperty(getTopBid().toString());
+    }
 
+    public long getSecondsLeft() {
         Duration timeLeft = Duration.between(LocalDateTime.now(), expireDate);
 
         long secondsLeft = timeLeft.toSeconds();
 
-        if (secondsLeft > 0) {
-            String formattedTimeLeft = String.format("Ends in %d:%02d:%02d",
-                    secondsLeft / 3600, (secondsLeft % 3600) / 60, (secondsLeft % 60));
-            return new SimpleStringProperty(formattedTimeLeft);
+        return secondsLeft;
+    }
 
+    public SimpleStringProperty getTimeLeftStringProperty() {
+        long secondsLeft = getSecondsLeft();
+
+        String timeLeft;
+
+        if (secondsLeft > 0) {
+            timeLeft = String.format("Ends in %d:%02d:%02d",
+                    secondsLeft / 3600, (secondsLeft % 3600) / 60, (secondsLeft % 60));
+            return new SimpleStringProperty(timeLeft);
         }
         else {
             long secondsAgo = secondsLeft * -1;
-            String formattedTimeLeft = String.format("Ended %d:%02d:%02d ago",
+            timeLeft = String.format("Ended %d:%02d:%02d ago",
                     secondsAgo / 3600, (secondsAgo % 3600) / 60, (secondsAgo % 60));
-            return new SimpleStringProperty(formattedTimeLeft);
         }
+
+        return new SimpleStringProperty(timeLeft);
+    }
+
+    public String getHasFavourited() {
+        return hasFavourited ? ("★") : ("☆");
     }
 
     public SimpleStringProperty getHasFavouritedStringProperty() {
-        return new SimpleStringProperty(hasFavourited ? ("★") : ("☆"));
+        return new SimpleStringProperty(getHasFavourited());
     }
 
     public void setHasFavourited(Boolean hasFavourited) {
@@ -106,5 +130,21 @@ public class Auction implements Serializable {
             }
         }
         return false;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public BigDecimal getStartingBidPrice() {
+        return startingBidPrice;
+    }
+
+    public BigDecimal getIncrementalBidPace() {
+        return incrementalBidPace;
+    }
+
+    public void bid(Bid newBid) {
+        bids.add(newBid);
     }
 }
