@@ -6,6 +6,7 @@ import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -55,12 +56,14 @@ public class listController implements Initializable {
         timeLeftCol.setPrefWidth(150);
         timeLeftCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getTimeLeftString"));
 
-        TableColumn<Auction, String> favouritedCol = new TableColumn<>("★");
-        favouritedCol.setPrefWidth(75);
-        favouritedCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getHasFavouritedString"));
+        TableColumn<Auction, String> followingCol = new TableColumn<>("Following");
+        followingCol.setPrefWidth(100);
+//        favouritedCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getHasFavouritedString"));
+        followingCol.setCellValueFactory(celldata -> new SimpleStringProperty(celldata.getValue().getUserFollowers().contains(AccountSession.getAccountSession().accountSessionUUID) ? "★":"☆"));
+
 
         // Add the constructed columns to the TableView
-        tableViewAuctions.getColumns().addAll(nameCol, topBidCol, timeLeftCol, favouritedCol);
+        tableViewAuctions.getColumns().addAll(nameCol, topBidCol, timeLeftCol, followingCol);
 
         // Hook up the observable list with the TableView
         tableViewAuctions.setItems(auctionObservableList);
@@ -131,8 +134,8 @@ public class listController implements Initializable {
             case PlacedABid:
                 tableViewAuctions.setItems(auctionObservableList.filtered(AuctionListPredicates.predicateOnlyHasBid));
                 break;
-            case Favourited:
-                tableViewAuctions.setItems(auctionObservableList.filtered(AuctionListPredicates.predicateOnlyFavourites));
+            case Followed:
+                tableViewAuctions.setItems(auctionObservableList.filtered(AuctionListPredicates.predicateOnlyFollowed));
                 break;
             default:
                 tableViewAuctions.setItems(auctionObservableList);

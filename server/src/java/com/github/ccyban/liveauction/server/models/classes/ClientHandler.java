@@ -94,6 +94,10 @@ public class ClientHandler extends Thread {
                                 "🔑 Signed In Attempt as " + ((Account) incomingRequest.requestPayload).getUsername() + ": " +
                                         (accountAttemptUUID != null ? "Successful" : "Failed"));
                     }
+                    case ToggleAuctionFollowByIds -> {
+                        auctionRepository.toggleFollowByIds(incomingRequest.targetUUID, (UUID) incomingRequest.requestPayload);
+                        onSubscriptionDataUpdate.run();
+                    }
                 }
             }
             clientSocket.close();

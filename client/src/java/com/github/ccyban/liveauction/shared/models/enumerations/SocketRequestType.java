@@ -9,5 +9,6 @@ public enum SocketRequestType implements Serializable {
     PostAuctionBid,
     CloseAllSubscriptions,
     GetPublicKey,
-    PostSymmetricKey
+    PostSymmetricKey,
+    ToggleAuctionFollowByIds
 }

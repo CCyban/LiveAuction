@@ -36,9 +36,9 @@ public class MockHelper {
                 randomBids.add(randomBid);
             }
 
-            Boolean randomHasFavourited = random.nextBoolean();
+            ArrayList<UUID> randomFollowers = new ArrayList<>();
 
-            auctions.add(new Auction("Some Auction", randomBids, randomExpiry, randomHasFavourited, "Boris", new BigDecimal(15), new BigDecimal(5)));
+            auctions.add(new Auction("Some Auction", randomBids, randomExpiry, randomFollowers, "Boris", new BigDecimal(15), new BigDecimal(5)));
         }
 
         auctionRepository.auctions = auctions;

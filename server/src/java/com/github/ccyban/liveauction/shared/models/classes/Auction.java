@@ -13,13 +13,13 @@ public class Auction implements Serializable {
     private UUID auctionUUID;
     private String name;
     private LocalDateTime expireDate;
-    private Boolean hasFavourited;
     private ArrayList<Bid> bids;
+    private ArrayList<UUID> userFollowers;
     private String sellerName;
     private BigDecimal startingBidPrice;
     private BigDecimal incrementalBidPace;
 
-    public Auction(String name, ArrayList<Bid> bids, LocalDateTime expireDate, Boolean hasFavourited, String sellerName, BigDecimal startingBidPrice, BigDecimal incrementalBidPace) {
+    public Auction(String name, ArrayList<Bid> bids, LocalDateTime expireDate, ArrayList<UUID> userFollowers, String sellerName, BigDecimal startingBidPrice, BigDecimal incrementalBidPace) {
         // Generate a UUID for the class
         this.auctionUUID = UUID.randomUUID();
 
@@ -27,7 +27,7 @@ public class Auction implements Serializable {
         this.name = name;
         this.bids = bids;
         this.expireDate = expireDate;
-        this.hasFavourited = hasFavourited;
+        this.userFollowers = userFollowers;
         this.sellerName = sellerName;
         this.startingBidPrice = startingBidPrice;
         this.incrementalBidPace = incrementalBidPace;
@@ -95,18 +95,6 @@ public class Auction implements Serializable {
         return new SimpleStringProperty(timeLeft);
     }
 
-    public String getHasFavourited() {
-        return hasFavourited ? ("★") : ("☆");
-    }
-
-    public SimpleStringProperty getHasFavouritedStringProperty() {
-        return new SimpleStringProperty(getHasFavourited());
-    }
-
-    public void setHasFavourited(Boolean hasFavourited) {
-        this.hasFavourited = hasFavourited;
-    }
-
     public boolean isFinished() {
         Duration timeLeft = Duration.between(LocalDateTime.now(), expireDate);
 
@@ -117,10 +105,6 @@ public class Auction implements Serializable {
         } else {
             return true;
         }
-    }
-
-    public boolean hasFavourited() {
-        return hasFavourited;
     }
 
     public boolean hasBid(UUID userUUID) {
@@ -152,5 +136,18 @@ public class Auction implements Serializable {
 
     public ArrayList<Bid> getBids() {
         return bids;
+    }
+
+    public ArrayList<UUID> getUserFollowers() {
+        return userFollowers;
+    }
+
+    public void toggleFollow(UUID userUUID) {
+        if (userFollowers.contains(userUUID)) {
+            userFollowers.remove(userUUID);
+        }
+        else {
+            userFollowers.add(userUUID);
+        }
     }
 }

@@ -60,7 +60,7 @@
                               <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
                            </padding>
                         </Label>
-                        <Button mnemonicParsing="false" style="-fx-border-style: Solid; -fx-background-color: Tan;" text="☆" HBox.hgrow="ALWAYS">
+                        <Button fx:id="buttonAuctionFollow" mnemonicParsing="false" onAction="#onFollow" style="-fx-border-style: Solid; -fx-background-color: Tan;" text="☆" HBox.hgrow="ALWAYS">
                            <font>
                               <Font size="36.0" />
                            </font>

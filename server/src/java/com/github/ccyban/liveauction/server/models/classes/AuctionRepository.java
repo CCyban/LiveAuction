@@ -34,10 +34,7 @@ public class AuctionRepository {
         }
     }
 
-    public ArrayList<String> getBiddingLog(UUID auctionUUID) {
-        ArrayList<String> test = new ArrayList<>();
-        test.add("test");
-
-        return test;
+    public void toggleFollowByIds(UUID auctionUUID, UUID userUUID) {
+        getAuctionByUUID(auctionUUID).toggleFollow(userUUID);
     }
 }

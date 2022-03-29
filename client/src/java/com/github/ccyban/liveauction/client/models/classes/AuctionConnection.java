@@ -73,9 +73,9 @@ public class AuctionConnection {
     public void closeAllActiveSubscriptions() {
         try {
             out.writeObject(
-                    encryptSocketRequest(
-                            new SocketRequest(SocketRequestType.CloseAllSubscriptions, null, null)
-                    )
+                encryptSocketRequest(
+                        new SocketRequest(SocketRequestType.CloseAllSubscriptions, null, null)
+                )
             );
         } catch (IOException e) {
             e.printStackTrace();
@@ -146,9 +146,9 @@ public class AuctionConnection {
     public Boolean signIn(Account signInAttempt) {
         try {
             out.writeObject(
-                    encryptSocketRequest(
-                            new SocketRequest(SocketRequestType.SignIn, null, signInAttempt)
-                    )
+                encryptSocketRequest(
+                        new SocketRequest(SocketRequestType.SignIn, null, signInAttempt)
+                )
             );
             SealedObject sealedResponse = (SealedObject) in.readObject();
             SocketResponse signInAttemptResponse = decryptSocketResponse(sealedResponse);
@@ -164,6 +164,19 @@ public class AuctionConnection {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public void followAuction(UUID auctionUUID) {
+        try {
+            out.writeObject(
+                encryptSocketRequest(
+                        new SocketRequest(SocketRequestType.ToggleAuctionFollowByIds, auctionUUID, AccountSession.getAccountSession().accountSessionUUID)
+                )
+            );
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

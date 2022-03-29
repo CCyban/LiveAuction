@@ -5,7 +5,7 @@ public enum Filter {
     Ongoing("Ongoing"),
     Finished("Finished"),
     PlacedABid("Placed a bid"),
-    Favourited("Favourited");
+    Followed("Followed");
 
     private String stringForm;
 

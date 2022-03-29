@@ -56,6 +56,9 @@ public class detailsController implements Initializable {
     private Label labelBidWarning;
 
     @FXML
+    private Button buttonAuctionFollow;
+
+    @FXML
     private ListView listViewBiddingLog;
 
 
@@ -99,6 +102,11 @@ public class detailsController implements Initializable {
         }
     }
 
+    @FXML
+    private void onFollow() {
+        AuctionConnection.getAuctionConnection().followAuction(auction.get().getAuctionUUID());
+    }
+
     private void onUINeedsUpdate() {
         Platform.runLater(() -> {
             UUID currentTopBidUserUUID = auction.get().getTopBid().userUUID;
@@ -136,7 +144,7 @@ public class detailsController implements Initializable {
             labelIncrementalPace.setText("Bidding Increments: £" + auction.get().getIncrementalBidPace());
             labelEndsIn.setText(auction.get().getTimeLeftStringProperty().get());
 
-
+            buttonAuctionFollow.setText(auction.get().getUserFollowers().contains(accountSessionUUID) ? "★" : "☆");
 
             ArrayList<Bid> bids = auction.get().getBids();
             ArrayList<String> biddingLog = new ArrayList<>();
