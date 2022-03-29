@@ -1,12 +1,6 @@
 package com.github.ccyban.liveauction.shared.models.classes;
 
-import org.apache.commons.codec.binary.Hex;
-
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class Account implements Serializable {

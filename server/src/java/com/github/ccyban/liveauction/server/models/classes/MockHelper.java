@@ -3,19 +3,12 @@ package com.github.ccyban.liveauction.server.models.classes;
 import com.github.ccyban.liveauction.shared.models.classes.Account;
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.Bid;
-import org.javatuples.Pair;
-import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
-
-import static org.mockito.ArgumentMatchers.any;
 
 public class MockHelper {
 

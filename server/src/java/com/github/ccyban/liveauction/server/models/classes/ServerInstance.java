@@ -1,6 +1,5 @@
 package com.github.ccyban.liveauction.server.models.classes;
 
-import com.github.ccyban.liveauction.server.Main;
 import org.mockito.Mockito;
 
 import java.io.IOException;

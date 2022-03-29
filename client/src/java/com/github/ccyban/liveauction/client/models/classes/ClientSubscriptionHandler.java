@@ -1,23 +1,18 @@
 package com.github.ccyban.liveauction.client.models.classes;
 
-import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
-import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 
 import javax.crypto.SealedObject;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ClientSubscriptionHandler {

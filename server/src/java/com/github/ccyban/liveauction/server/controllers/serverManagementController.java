@@ -2,10 +2,7 @@ package com.github.ccyban.liveauction.server.controllers;
 
 import com.github.ccyban.liveauction.server.models.classes.ServerInstance;
 import com.github.ccyban.liveauction.server.models.classes.ServerLog;
-import com.github.ccyban.liveauction.shared.models.classes.Account;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -54,7 +51,7 @@ public class serverManagementController implements Initializable {
 
     public void onBringOnline() {
         ServerInstance serverInstance = ServerInstance.getInstance();
-        if(serverInstance.startServer()) {
+        if (serverInstance.startServer()) {
             flipServerStatusButtonDisables();
         }
     }

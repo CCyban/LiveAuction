@@ -2,11 +2,9 @@ package com.github.ccyban.liveauction.server.models.classes;
 
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.Bid;
-import org.mockito.Mockito;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class AuctionRepository {
     public ArrayList<Auction> auctions = new ArrayList<>();

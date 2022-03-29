@@ -18,7 +18,6 @@ public class PageValue {
             return FXMLLoader.load(getClass().getResource(_resource));
         }
         catch (Exception e) {
-            // TODO: Add proper error logging here
             new Alert(Alert.AlertType.ERROR, "Failed to load the " + _title).show();
             return null;
         }

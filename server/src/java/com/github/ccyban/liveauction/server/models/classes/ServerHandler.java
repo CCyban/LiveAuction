@@ -1,18 +1,9 @@
 package com.github.ccyban.liveauction.server.models.classes;
 
-import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Consumer;
 
@@ -20,7 +11,6 @@ import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public class ServerHandler extends Thread {
 
-    private final int portNumber = 9090;
     private final ServerSocket serverSocket;
     private final AuctionRepository auctionRepository;
     private final AccountRepository accountRepository;
@@ -43,9 +33,9 @@ public class ServerHandler extends Thread {
         activeConcurrentConnectionsChangeConsumer.accept(clientThreadPool.getActiveCount());
 
         try {
-            while(isListening) {
+            while (isListening) {
                 Socket newClientSocket = serverSocket.accept();
-                clientSockets.add(newClientSocket); // For disconnecting? (todo: check if it even works/needed since it only stops new connections last time I tested)
+                clientSockets.add(newClientSocket);
 
                 ClientHandler newClientHandler = new ClientHandler(newClientSocket, auctionRepository, accountRepository, () -> onClientConnect(), () -> onClientDisconnect(), () -> onSubscriptionDataUpdate());
                 clientHandlers.add(newClientHandler);
@@ -66,8 +56,8 @@ public class ServerHandler extends Thread {
     }
 
     public void onSubscriptionDataUpdate() {
-        ServerLog.getInstance().log( "📩 Sending All Eligible Subscribed Clients Data Updates");
-        for (ClientHandler clientHandler: clientHandlers) {
+        ServerLog.getInstance().log("📩 Sending All Eligible Subscribed Clients Data Updates");
+        for (ClientHandler clientHandler : clientHandlers) {
             try {
                 if (clientHandler.subscriptionHandler != null) {
                     clientHandler.subscriptionHandler.ensureClientHasLatestData();
@@ -84,11 +74,10 @@ public class ServerHandler extends Thread {
     }
 
     private void shutDownConnections() {
-        for (Socket client: clientSockets) {
+        for (Socket client : clientSockets) {
             try {
                 client.close();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 ServerLog.getInstance().log("⚠ Exception caught when trying to shut down connections");
             }
         }

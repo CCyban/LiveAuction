@@ -2,7 +2,6 @@ package com.github.ccyban.liveauction.client.models.classes;
 
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 
-import java.util.UUID;
 import java.util.function.Predicate;
 
 public class AuctionListPredicates {

@@ -1,10 +1,6 @@
 package com.github.ccyban.liveauction.server;
 
-import com.github.ccyban.liveauction.server.models.classes.AuctionRepository;
-import com.github.ccyban.liveauction.server.models.classes.ServerHandler;
 import com.github.ccyban.liveauction.server.models.classes.ServerInstance;
-import com.github.ccyban.liveauction.shared.models.classes.Auction;
-import com.github.ccyban.liveauction.shared.models.classes.Bid;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -12,13 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.mockito.Mockito;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.UUID;
 
 public class Main extends Application {
 

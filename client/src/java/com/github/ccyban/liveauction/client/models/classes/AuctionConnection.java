@@ -1,18 +1,26 @@
 package com.github.ccyban.liveauction.client.models.classes;
 
 import com.github.ccyban.liveauction.client.models.enumerations.Page;
-import com.github.ccyban.liveauction.shared.models.classes.*;
+import com.github.ccyban.liveauction.shared.models.classes.Account;
+import com.github.ccyban.liveauction.shared.models.classes.Bid;
+import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
+import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
 import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
-import java.net.ConnectException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.security.*;
-import java.util.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 public class AuctionConnection {
     private static Timer tickTimer;

@@ -17,7 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ResourceBundle;
+import java.util.TimerTask;
 
 public class listController implements Initializable {
 
@@ -153,20 +154,24 @@ public class listController implements Initializable {
 
     @FXML
     private void onOpenAuction() {
-        // todo: do check if an auction is selected
 
-        AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
-        auctionConnection.cancelTimerTask();
-        auctionConnection.closeAllActiveSubscriptions();
+        if (tableViewAuctions.getSelectionModel().getSelectedItem() == null) {
+            new Alert(Alert.AlertType.WARNING, "Please select an auction to open").show();
+        }
+        else {
+            AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
+            auctionConnection.cancelTimerTask();
+            auctionConnection.closeAllActiveSubscriptions();
 
-        Auction selectedAuction = tableViewAuctions.getSelectionModel().getSelectedItem();
+            Auction selectedAuction = tableViewAuctions.getSelectionModel().getSelectedItem();
 
-        if (selectedAuction != null) {
+            if (selectedAuction != null) {
 
-            AccountSession accountSession = AccountSession.getAccountSession();
-            accountSession.setSelectedAuction(selectedAuction);
+                AccountSession accountSession = AccountSession.getAccountSession();
+                accountSession.setSelectedAuction(selectedAuction);
 
-            PageManager.loadPage(Page.AuctionDetails, accountSession);
+                PageManager.loadPage(Page.AuctionDetails, accountSession);
+            }
         }
     }
 }

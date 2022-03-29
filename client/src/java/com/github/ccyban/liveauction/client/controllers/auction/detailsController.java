@@ -1,9 +1,9 @@
 package com.github.ccyban.liveauction.client.controllers.auction;
 
+import com.github.ccyban.liveauction.client.models.classes.AccountSession;
 import com.github.ccyban.liveauction.client.models.classes.AuctionConnection;
 import com.github.ccyban.liveauction.client.models.classes.ClientSubscriptionHandler;
 import com.github.ccyban.liveauction.client.models.classes.PageManager;
-import com.github.ccyban.liveauction.client.models.classes.AccountSession;
 import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.Bid;
@@ -19,9 +19,10 @@ import javafx.scene.control.ListView;
 
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.ResourceBundle;
+import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class detailsController implements Initializable {

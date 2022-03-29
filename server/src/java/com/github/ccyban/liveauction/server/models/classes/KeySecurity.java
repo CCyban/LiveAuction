@@ -1,10 +1,9 @@
 package com.github.ccyban.liveauction.server.models.classes;
 
-import com.github.ccyban.liveauction.shared.models.classes.Account;
-
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.*;
+import java.io.IOException;
+import java.io.Serializable;
 import java.security.*;
 
 public class KeySecurity {

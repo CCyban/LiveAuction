@@ -2,7 +2,6 @@ package com.github.ccyban.liveauction.server.models.classes;
 
 import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.Bid;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AuctionRepositoryTest {
     private AuctionRepository auctionRepository;

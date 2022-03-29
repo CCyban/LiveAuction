@@ -1,16 +1,7 @@
 package com.github.ccyban.liveauction.server.models.classes;
 
 import com.github.ccyban.liveauction.shared.models.classes.Account;
-import com.github.ccyban.liveauction.shared.models.classes.Auction;
-import com.github.ccyban.liveauction.shared.models.classes.Bid;
-import org.apache.commons.codec.binary.Hex;
-import org.javatuples.Pair;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.security.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
@@ -26,7 +17,7 @@ public class AccountRepository {
         Account accountAttempt = accounts.stream().filter((
                 account ->
                         account.getUsername().equals(signInAttempt.getUsername()) &&
-                        Arrays.equals(account.getHashedPassword(),signInAttempt.getHashedPassword())))
+                                Arrays.equals(account.getHashedPassword(),signInAttempt.getHashedPassword())))
                 .findFirst().orElse(null);
 
         return (accountAttempt == null) ? null : accountAttempt.getAccountUUID();

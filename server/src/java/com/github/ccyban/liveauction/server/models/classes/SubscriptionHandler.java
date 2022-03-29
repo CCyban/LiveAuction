@@ -1,18 +1,11 @@
 package com.github.ccyban.liveauction.server.models.classes;
 
-import com.github.ccyban.liveauction.shared.models.classes.Auction;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
-import org.apache.commons.lang3.SerializationUtils;
 
 import javax.crypto.SealedObject;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class SubscriptionHandler {
 
@@ -43,7 +36,7 @@ public class SubscriptionHandler {
 
     private void sendSocketResponse(SocketResponse socketResponse) throws IOException {
             SealedObject sealedSocketResponse = keySecurity.sealObject(socketResponse);
-            outputStream.writeObject(sealedSocketResponse);
+        outputStream.writeObject(sealedSocketResponse);
     }
 
     public void ensureClientHasLatestData() throws IOException {

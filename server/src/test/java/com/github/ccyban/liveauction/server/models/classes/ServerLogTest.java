@@ -3,7 +3,6 @@ package com.github.ccyban.liveauction.server.models.classes;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Semaphore;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ServerLogTest {
 
