@@ -60,7 +60,7 @@ public class ServerInstance {
                 server = new ServerHandler(serverSocket, auctionRepository, accountRepository, activeConcurrentConnectionsChangeConsumer);
             }
             catch (IOException e) {
-                e.printStackTrace();
+                ServerLog.getInstance().log("⚠ Exception caught trying to start server socket on port 9090");
                 return false;
             }
             serverThread = new Thread(server);
@@ -68,10 +68,11 @@ public class ServerInstance {
         }
         else {
             try {
+                shutServerDown();
                 serverSocket.close();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                ServerLog.getInstance().log("⚠ Exception caught trying to close server socket");
                 return false;
             }
         }
@@ -97,7 +98,7 @@ public class ServerInstance {
                 serverSocket.close();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                ServerLog.getInstance().log("⚠ Exception caught trying to close server socket");
             }
         }
     }

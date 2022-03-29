@@ -1,8 +1,10 @@
 package com.github.ccyban.liveauction.client.models.classes;
 
+import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import com.github.ccyban.liveauction.shared.models.classes.*;
 import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -169,7 +171,14 @@ public class AuctionConnection {
             );
 
         } catch (IOException e) {
-            e.printStackTrace();
+            lostConnection();
         }
+    }
+
+    public void lostConnection() {
+        new Alert(Alert.AlertType.ERROR, "Lost Server Connection. You are back at the initial page.").show();
+        connectionEstablished = false;
+        hasSentSecret = false;
+        PageManager.loadPage(Page.Keys);
     }
 }

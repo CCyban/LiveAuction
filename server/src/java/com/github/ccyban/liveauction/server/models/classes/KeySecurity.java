@@ -23,7 +23,7 @@ public class KeySecurity {
             serverPublicKey = pair.getPublic();
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            ServerLog.getInstance().log("⚠ Exception caught trying to use the RSA algorithm");
         }
     }
 
@@ -40,15 +40,15 @@ public class KeySecurity {
             hasSecret = true;
 
         } catch (NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            ServerLog.getInstance().log("⚠ Exception caught trying to use the RSA and AES cipher algorithms");
         }
     }
 
-    public Object desealObject(SealedObject sealedObject) {
+    public Object unsealObject(SealedObject sealedObject) {
         try {
             return sealedObject.getObject(symmetricKey);
         } catch (IOException | NoSuchAlgorithmException | InvalidKeyException | ClassNotFoundException e) {
-            e.printStackTrace();
+            ServerLog.getInstance().log("⚠ Exception caught trying to unseal object");
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class KeySecurity {
 
             return new SealedObject((Serializable) object, cipher);
         } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | IOException | InvalidKeyException e) {
-            e.printStackTrace();
+            ServerLog.getInstance().log("⚠ Exception caught trying to seal object");
             return null;
         }
     }

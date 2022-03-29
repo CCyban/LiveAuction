@@ -43,8 +43,7 @@ public class ClientSubscriptionHandler {
 
         } catch (IOException e) {
             Platform.runLater(() -> {
-                new Alert(Alert.AlertType.ERROR, "Lost Server Connection. You are back at the initial page.").show();
-                PageManager.loadPage(Page.Keys);
+                AuctionConnection.getAuctionConnection().lostConnection();
             });
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -57,8 +56,6 @@ public class ClientSubscriptionHandler {
 
             AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
             SocketResponse incomingResponse = auctionConnection.decryptSocketResponse(incomingEncryptedResponse);
-
-            System.out.println("Client received: " + incomingResponse);
 
             // Check to see if it's a cancelled subscription
             if (incomingResponse.responsePayload == null) {
@@ -74,6 +71,5 @@ public class ClientSubscriptionHandler {
                 onUINeedsUpdate.run();
             }
         }
-        System.out.println("A Client Subscription Ended 🔚");
     }
 }

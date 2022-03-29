@@ -15,12 +15,10 @@ public class PageValue {
 
     public Parent getRoot() {
         try {
-            System.out.println("Loading: " + _resource + "...");
             return FXMLLoader.load(getClass().getResource(_resource));
         }
         catch (Exception e) {
             // TODO: Add proper error logging here
-            System.out.println("Issue Loading: " + _resource);
             new Alert(Alert.AlertType.ERROR, "Failed to load the " + _title).show();
             return null;
         }

@@ -52,10 +52,8 @@ public class ServerHandler extends Thread {
                 clientThreadPool.execute(newClientHandler);
             }
         } catch (IOException e) {
-            System.out.println("Exception caught when trying to listen on port "
-                    + portNumber
-                    + " or listening for a connection");
-            System.out.println(e.getMessage());
+            activeConcurrentConnectionsChangeConsumer.accept(0);
+            ServerLog.getInstance().log("🔚 Server is Offline");
         }
     }
 
@@ -75,7 +73,7 @@ public class ServerHandler extends Thread {
                     clientHandler.subscriptionHandler.ensureClientHasLatestData();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                ServerLog.getInstance().log("⚠ Exception caught when trying to send subscription data updates");
             }
         }
     }
@@ -91,7 +89,7 @@ public class ServerHandler extends Thread {
                 client.close();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                ServerLog.getInstance().log("⚠ Exception caught when trying to shut down connections");
             }
         }
     }

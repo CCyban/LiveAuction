@@ -47,8 +47,7 @@ public class loginController implements Initializable {
         Boolean isLoginSuccessful = auctionConnection.signIn(loginAttempt);
         if (isLoginSuccessful == null) {
             Platform.runLater(() -> {
-                new Alert(Alert.AlertType.ERROR, "Lost Server Connection. You are back at the initial page.").show();
-                PageManager.loadPage(Page.Keys);
+                AuctionConnection.getAuctionConnection().lostConnection();
             });
         }
         else if (isLoginSuccessful) {

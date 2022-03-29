@@ -1,20 +1,13 @@
 package com.github.ccyban.liveauction.server.models.classes;
 
-import com.github.ccyban.liveauction.server.Main;
 import com.github.ccyban.liveauction.shared.models.classes.Account;
 import com.github.ccyban.liveauction.shared.models.classes.Bid;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.classes.SocketResponse;
-import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
-import org.javatuples.Pair;
-import org.mockito.Mockito;
 
 import javax.crypto.SealedObject;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 public class ClientHandler extends Thread {
@@ -69,7 +62,7 @@ public class ClientHandler extends Thread {
 
             // Note: The loop condition hangs on inputStream.readObject()
             while ((incomingEncryptedRequest = (SealedObject) inputStream.readObject()) != null) {
-                incomingRequest = (SocketRequest) keySecurity.desealObject(incomingEncryptedRequest);
+                incomingRequest = (SocketRequest) keySecurity.unsealObject(incomingEncryptedRequest);
 
                 switch (incomingRequest.requestType) {
                     case PostAuctionBid -> {
@@ -100,14 +93,24 @@ public class ClientHandler extends Thread {
                     }
                 }
             }
-            clientSocket.close();
+            closeSocketStreams();
         }
         catch (IOException e) {
             ServerLog.getInstance().clientLog(clientSocket.hashCode(), "👋 Client Disconnected");
             subscriptionHandler = null;
             onClientDisconnect.run();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            ServerLog.getInstance().clientLog(clientSocket.hashCode(), "⚠ Exception caught trying to read incoming socket request data");
+        }
+    }
+
+    public void closeSocketStreams() {
+        try {
+            clientSocket.getInputStream().close();
+            clientSocket.getOutputStream().close();
+            clientSocket.close();
+        } catch (IOException e) {
+            ServerLog.getInstance().clientLog(clientSocket.hashCode(), "⚠ Exception caught trying to close socket streams");
         }
     }
 }
