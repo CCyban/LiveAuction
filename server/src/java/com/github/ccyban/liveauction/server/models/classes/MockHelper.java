@@ -31,30 +31,38 @@ public class MockHelper {
 
             Random random = new Random();
 
+            ArrayList<UUID> randomFollowers = new ArrayList<>();
+
+            BigDecimal randomStartingBidPrice = new BigDecimal(random.nextInt(100) + 5);
+
+            BigDecimal randomBidIncrementPacing = new BigDecimal(random.nextInt(50) + 5);
+
             if (random.nextBoolean()) {
-                Bid randomBid = new Bid(new BigDecimal((int)(Math.random()*(60))), UUID.fromString("8fc03087-d265-11e7-b8c6-83e29cd24f4c"));
+                Bid randomBid = new Bid(randomStartingBidPrice, UUID.randomUUID());
                 randomBids.add(randomBid);
             }
 
-            ArrayList<UUID> randomFollowers = new ArrayList<>();
+            String auctionName = "";
+            switch (random.nextInt(6)) {
+                case 0 -> { auctionName = "Sony 50 Inch TV"; }
+                case 1 -> { auctionName = "DJI Mini 2 Drone"; }
+                case 2 -> { auctionName = "Tesla Model 3"; }
+                case 3 -> { auctionName = "Apple Pencil"; }
+                case 4 -> { auctionName = "SecretLab Chair"; }
+                case 5 -> { auctionName = "Philips Air Fryer"; }
+            }
 
-            auctions.add(new Auction("Some Auction", randomBids, randomExpiry, randomFollowers, "Boris", new BigDecimal(15), new BigDecimal(5)));
+            auctions.add(new Auction(auctionName, randomBids, randomExpiry, randomFollowers, "Jane", randomStartingBidPrice, randomBidIncrementPacing));
         }
 
         auctionRepository.auctions = auctions;
     }
 
     public static void mockAccountRepository(AccountRepository accountRepository) {
+        accounts.add(new Account("Harry", "P0tt3r"));
+        accounts.add(new Account("Darth", "Vad3r!"));
 
-        MessageDigest messageDigest = null;
-        try {
-            messageDigest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        accounts.add(new Account("Harry", "Potter"));
-        accounts.add(new Account("Darth", "Vader"));
+        // The below accounts exist to make it easier for concurrent client testing against one server
         accounts.add(new Account("1", "1"));
         accounts.add(new Account("2", "2"));
         accounts.add(new Account("3", "3"));
@@ -63,7 +71,6 @@ public class MockHelper {
         accounts.add(new Account("6", "6"));
         accounts.add(new Account("7", "7"));
         accounts.add(new Account("8", "8"));
-
 
         accountRepository.accounts = accounts;
     }

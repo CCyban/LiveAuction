@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class AuctionRepository {
-    public ArrayList<Auction> auctions;
+    public ArrayList<Auction> auctions = new ArrayList<>();
 
     public AuctionRepository() {
         // Mocking is used instead of having a real database call here
@@ -24,7 +24,6 @@ public class AuctionRepository {
     }
 
     public void bidOnAuction(UUID auctionUUID, Bid newBid) {
-        // Mocking is used instead of having a real database call here
         Auction auction = getAuctionByUUID(auctionUUID);
         if (auction != null) {
             auction.bid(newBid);

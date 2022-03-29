@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class AccountRepository {
-    public ArrayList<Account> accounts;
+    public ArrayList<Account> accounts = new ArrayList<>();
 
     public AccountRepository() {
         // Mocking is used instead of having a real database call here

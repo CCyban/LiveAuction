@@ -71,15 +71,7 @@ public class AuctionConnection {
     }
 
     public void closeAllActiveSubscriptions() {
-        try {
-            out.writeObject(
-                encryptSocketRequest(
-                        new SocketRequest(SocketRequestType.CloseAllSubscriptions, null, null)
-                )
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sendSealedSocketRequest(new SocketRequest(SocketRequestType.CloseAllSubscriptions, null, null));
     }
 
     public void postBid(UUID auctionToBidOn, Bid newBid) {
@@ -96,7 +88,7 @@ public class AuctionConnection {
             SocketResponse publicKeyResponse = (SocketResponse) in.readObject();
             PublicKey publicKey = (PublicKey) publicKeyResponse.responsePayload;
 
-            System.out.println("GOT PUBLIC KEY ✔");
+            // Now we have the asymmetric public key, we can make a symmetric secret key and encrypt it to share with the server
 
             byte[] secureRandomKeyBytes  = new byte[16];
             SecureRandom secureRandom = new SecureRandom();
@@ -113,7 +105,8 @@ public class AuctionConnection {
 
             out.writeObject(new SocketRequest(SocketRequestType.PostSymmetricKey, null, encryptedSecretKey));
             hasSentSecret = true;
-            System.out.println("SENT SECRET KEY ✔");
+
+            // Now both client and server have a symmetric secret key to communicate securely with
 
         } catch (IOException | ClassNotFoundException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException e) {
             e.printStackTrace();
@@ -145,11 +138,8 @@ public class AuctionConnection {
 
     public Boolean signIn(Account signInAttempt) {
         try {
-            out.writeObject(
-                encryptSocketRequest(
-                        new SocketRequest(SocketRequestType.SignIn, null, signInAttempt)
-                )
-            );
+            sendSealedSocketRequest(new SocketRequest(SocketRequestType.SignIn, null, signInAttempt));
+
             SealedObject sealedResponse = (SealedObject) in.readObject();
             SocketResponse signInAttemptResponse = decryptSocketResponse(sealedResponse);
 
@@ -168,11 +158,13 @@ public class AuctionConnection {
     }
 
     public void followAuction(UUID auctionUUID) {
+        sendSealedSocketRequest(new SocketRequest(SocketRequestType.ToggleAuctionFollowByIds, auctionUUID, AccountSession.getAccountSession().accountSessionUUID));
+    }
+
+    public void sendSealedSocketRequest(SocketRequest socketRequest) {
         try {
             out.writeObject(
-                encryptSocketRequest(
-                        new SocketRequest(SocketRequestType.ToggleAuctionFollowByIds, auctionUUID, AccountSession.getAccountSession().accountSessionUUID)
-                )
+                encryptSocketRequest(socketRequest)
             );
 
         } catch (IOException e) {

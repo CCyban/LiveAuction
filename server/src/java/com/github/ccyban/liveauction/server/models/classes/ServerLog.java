@@ -27,16 +27,19 @@ public class ServerLog {
 
     public void log(String messageToLog) {
         Platform.runLater(() -> {
-
             serverLog.add(0, LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + " | " + messageToLog);
         });
     }
 
     public void clientLog(int clientSocketHashCode, String clientMessageToLog) {
-        log("Client:" + clientSocketHashCode + " | " +  clientMessageToLog);
+        log(" Client:" + clientSocketHashCode + " | " +  clientMessageToLog);
     }
 
     public ObservableList<String> getLog() {
         return serverLog;
+    }
+
+    public void restartLog() {
+        uniqueInstance = new ServerLog();
     }
 }
