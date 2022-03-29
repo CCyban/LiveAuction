@@ -95,16 +95,23 @@ public class detailsController implements Initializable {
     @FXML
     private void onBid() {
         if (auction != null) {
-            BigDecimal newBidAmount = auction.get().getTopBid().amount.add(auction.get().getIncrementalBidPace());
-
             AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
-            auctionConnection.postBid(auction.get().getAuctionUUID(), new Bid(newBidAmount, AccountSession.getAccountSession().accountSessionUUID));
+            auctionConnection.postBid(auction.get().getAuctionUUID(), new Bid(getNextBidAmount(), AccountSession.getAccountSession().accountSessionUUID));
         }
     }
 
     @FXML
     private void onFollow() {
         AuctionConnection.getAuctionConnection().followAuction(auction.get().getAuctionUUID());
+    }
+
+    public BigDecimal getNextBidAmount() {
+        if (auction.get().getTopBid().amount.compareTo(new BigDecimal(0)) == 0) {
+            return auction.get().getStartingBidPrice();
+        }
+        else {
+            return auction.get().getTopBid().amount.add(auction.get().getIncrementalBidPace());
+        }
     }
 
     private void onUINeedsUpdate() {
@@ -134,7 +141,7 @@ public class detailsController implements Initializable {
                 }
                 else {
                     buttonBid.setDisable(false);
-                    labelBidWarning.setText("By choosing to bid, you will be bidding £" + (auction.get().getTopBid().amount.add(auction.get().getIncrementalBidPace())));
+                    labelBidWarning.setText("By choosing to bid, you will be bidding £" + getNextBidAmount());
                 }
             }
 
@@ -148,6 +155,7 @@ public class detailsController implements Initializable {
 
             ArrayList<Bid> bids = auction.get().getBids();
             ArrayList<String> biddingLog = new ArrayList<>();
+            biddingLog.add("Auction Started");
             for (Bid bid: bids) {
                 if (bid.userUUID.equals(accountSessionUUID)) {
                     biddingLog.add(0, "You placed a bid worth £" + bid.amount);
@@ -155,6 +163,9 @@ public class detailsController implements Initializable {
                 else {
                     biddingLog.add(0, "Someone placed a bid worth £" + bid.amount);
                 }
+            }
+            if (auction.get().getSecondsLeft() <= 0) {
+                biddingLog.add(0, "Auction Finished");
             }
             listViewBiddingLog.setItems(FXCollections.observableList(biddingLog));
         });

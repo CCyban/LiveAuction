@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.security.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class AccountRepository {
@@ -23,8 +24,9 @@ public class AccountRepository {
 
     public UUID getAccountUUID(Account signInAttempt) {
         Account accountAttempt = accounts.stream().filter((
-                account -> account.getUsername().equals(signInAttempt.getUsername()) &&
-                signInAttempt.getHashedPassword().equals(signInAttempt.getHashedPassword())))
+                account ->
+                        account.getUsername().equals(signInAttempt.getUsername()) &&
+                        Arrays.equals(account.getHashedPassword(),signInAttempt.getHashedPassword())))
                 .findFirst().orElse(null);
 
         return (accountAttempt == null) ? null : accountAttempt.getAccountUUID();

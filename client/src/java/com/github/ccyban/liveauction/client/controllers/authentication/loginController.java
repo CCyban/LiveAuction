@@ -7,6 +7,7 @@ import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import com.github.ccyban.liveauction.shared.models.classes.Account;
 import com.github.ccyban.liveauction.shared.models.classes.SocketRequest;
 import com.github.ccyban.liveauction.shared.models.enumerations.SocketRequestType;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -39,14 +40,18 @@ public class loginController implements Initializable {
     }
 
     public void signIn(final String usernameInput, final String passwordInput) {
-        System.out.println("Inputs: USERNAME|" + usernameInput + "| PASSWORD|" + passwordInput + "|");
-
         Account loginAttempt = new Account(usernameInput, passwordInput);
 
         AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
 
-        if (auctionConnection.signIn(loginAttempt)) {
-            new Alert(Alert.AlertType.INFORMATION, "Successful Login").show();
+        Boolean isLoginSuccessful = auctionConnection.signIn(loginAttempt);
+        if (isLoginSuccessful == null) {
+            Platform.runLater(() -> {
+                new Alert(Alert.AlertType.ERROR, "Lost Server Connection. You are back at the initial page.").show();
+                PageManager.loadPage(Page.Keys);
+            });
+        }
+        else if (isLoginSuccessful) {
             onSuccessfulSignIn();
         }
         else {
@@ -55,7 +60,7 @@ public class loginController implements Initializable {
     }
 
     public void onSuccessfulSignIn() {
+        new Alert(Alert.AlertType.INFORMATION, "Successful Login").showAndWait();
         PageManager.loadPage(Page.AuctionList);
-
     }
 }

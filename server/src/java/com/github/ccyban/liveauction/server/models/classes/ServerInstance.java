@@ -37,16 +37,16 @@ public class ServerInstance {
         return changeServerStatus(false);
     }
 
-    private synchronized boolean changeServerStatus(Boolean _isOnline) {
-        isOnline = _isOnline;
+    private synchronized boolean changeServerStatus(Boolean isOnline) {
+        this.isOnline = isOnline;
 
         // Status Change Consumer
         if (statusChangeConsumer != null) {
-            statusChangeConsumer.accept(_isOnline);
+            statusChangeConsumer.accept(this.isOnline);
         }
 
         // Perform the status change
-        if (isOnline) {
+        if (this.isOnline) {
             try {
                 serverSocket = new ServerSocket(9090);
 
@@ -91,13 +91,14 @@ public class ServerInstance {
     }
 
     public void shutServerDown() {
-        server.shutDown();
-
-        try {
-            serverSocket.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
+        if (server != null) {
+            server.shutDown();
+            try {
+                serverSocket.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

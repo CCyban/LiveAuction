@@ -33,7 +33,10 @@ public class PageManager {
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(final WindowEvent event) {
-                AuctionConnection.cancelTimerTask();
+                // Shut client subscription threads down
+                AuctionConnection auctionConnection = AuctionConnection.getAuctionConnection();
+                auctionConnection.cancelTimerTask();
+                auctionConnection.closeAllActiveSubscriptions();
             }
         });
     }

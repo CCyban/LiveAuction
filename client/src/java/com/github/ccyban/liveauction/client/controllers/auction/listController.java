@@ -45,7 +45,7 @@ public class listController implements Initializable {
     private void loadAuctionColumnsIntoTable() {
         // Set the TableColumns up for the TableView
         TableColumn<Auction, String> nameCol = new TableColumn<Auction, String>("Auction Name");
-        nameCol.setPrefWidth(150);
+        nameCol.setPrefWidth(200);
         nameCol.setCellValueFactory(new PropertyValueFactory<Auction, String>("getNameString"));
 
         TableColumn<Auction, String> topBidCol = new TableColumn<Auction, String>("Top Bid");

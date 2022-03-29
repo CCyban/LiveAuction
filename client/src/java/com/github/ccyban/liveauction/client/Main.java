@@ -1,5 +1,6 @@
 package com.github.ccyban.liveauction.client;
 
+import com.github.ccyban.liveauction.client.models.classes.AuctionConnection;
 import com.github.ccyban.liveauction.client.models.classes.PageManager;
 import com.github.ccyban.liveauction.client.models.enumerations.Page;
 import javafx.application.Application;

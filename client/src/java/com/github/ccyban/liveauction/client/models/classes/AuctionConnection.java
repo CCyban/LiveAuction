@@ -15,13 +15,15 @@ import java.util.*;
 public class AuctionConnection {
     private static Timer tickTimer;
 
-    public static void setTimerTask(TimerTask timerTask) {
+    public void setTimerTask(TimerTask timerTask) {
         tickTimer = new Timer();
         tickTimer.schedule(timerTask, 0, 1000);
     }
 
-    public static void cancelTimerTask() {
-        tickTimer.cancel();
+    public void cancelTimerTask() {
+        if (tickTimer != null) {
+            tickTimer.cancel();
+        }
     }
 
     // This area is generally used to fetch current auction data from socket & feed it into the table each tick
@@ -42,7 +44,6 @@ public class AuctionConnection {
 
     private AuctionConnection () {
         // Starting connection
-        // TODO: Add/use authentication variables here
         try {
             clientSocket = new Socket("localhost", 9090);
             out = new ObjectOutputStream(clientSocket.getOutputStream());
