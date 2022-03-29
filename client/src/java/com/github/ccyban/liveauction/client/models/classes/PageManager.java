@@ -16,7 +16,6 @@ public class PageManager {
         put(Page.Keys, new PageValue("/views/authentication/keys.fxml", "Exchange Keys"));
         put(Page.Login, new PageValue("/views/authentication/login.fxml", "Login Screen"));
         put(Page.AuctionList, new PageValue("/views/auction/list.fxml", "Auction List"));
-        put(Page.AuctionPreview, new PageValue("/views/auction/preview.fxml", "Auction Preview"));
         put(Page.AuctionDetails, new PageValue("/views/auction/details.fxml", "Auction Details"));
     }};
 
