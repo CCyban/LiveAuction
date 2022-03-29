@@ -38,8 +38,8 @@ At the start of the client-server socket connection, the keys are meant to be ex
 13. In the **Main class** field, type **Main**.
 14. Press **Modify options**, then press **Add VM options**
 - ![image](https://user-images.githubusercontent.com/47162481/120003654-dce30b00-bfcd-11eb-80e6-4cffc5eb79f3.png)
-15. In the VM options field, paste this in `--module-path "\path\to\javafx-sdk-16\lib" --add-modules javafx.controls,javafx.fxml`. Change the path inside it to the one used for your extracted JavaFX lib folder.
-- For example you may want to use `--module-path "C:\Users\Administrator\Downloads\openjfx-16_windows-x64_bin-sdk\javafx-sdk-16\lib" --add-modules javafx.controls,javafx.fxml` if you extracted it in your downloads folder.
+15. In the VM options field, paste this in `--module-path "\path\to\javafx-sdk-18\lib" --add-modules javafx.controls,javafx.fxml`. Change the path inside it to the one used for your extracted JavaFX lib folder.
+- For example you may want to use `--module-path "C:\Users\Administrator\Downloads\openjfx-18_windows-x64_bin-sdk\javafx-sdk-18\lib" --add-modules javafx.controls,javafx.fxml` if you extracted it in your downloads folder.
 16. The final state of the window should look something like this:
 - ![image](https://user-images.githubusercontent.com/47162481/160641927-c3f34e95-2fe9-4a0a-bb07-4e9e5efadc9f.png)
 17. Press **OK** to finalise the configurations & exit the window.
